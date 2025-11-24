@@ -1,0 +1,5 @@
+{
+  "name": "OpenQR AI",
+  "description": "A completely free, professional-grade QR code generator enhanced with Gemini AI for content creation. Create custom QR codes for Links, WiFi, VCards, and more with no paywalls.",
+  "requestFramePermissions": []
+}
