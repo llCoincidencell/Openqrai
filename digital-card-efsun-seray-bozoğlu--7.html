@@ -2,37 +2,63 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="theme-color" content="#531a6e">
+    <meta name="msapplication-navbutton-color" content="#531a6e">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>EFSUN SERAY BOZOĞLU - Dijital Kartvizit</title>
     <style>
-        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        /* 2. TEKNİK SIFIRLAMA VE DOKUNMATİK AYARLARI */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; /* Mobilde tıklama mavisini kaldır */
+            outline: none;
+        }
+
+        body, html {
+            height: 100%; /* Tam sayfa yerleşimi garanti et */
+        }
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f3f4f6; 
+            color: #1f2937;
+            overscroll-behavior: none; /* iOS lastik bant efektini engelle */
+            
+            /* Yazıların daha net görünmesi için */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
         
         /* Ana Kapsayıcı */
         .container { 
-            max-width: 480px; 
+            width: 100%;
+            max-width: 480px; /* Masaüstünde çok genişlemeyi engelle */
             margin: 0 auto; 
             min-height: 100vh; 
+            /* iPhone X ve üzeri için alt çubuk boşluğu */
+            padding-bottom: env(safe-area-inset-bottom); 
             background-color: white; 
             position: relative; 
-            overflow: hidden; 
+            overflow-x: hidden; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
-        /* --- YENİ: ŞEHİRCİLİK/İMAR PLANLAMA ARKA PLAN DESENİ --- */
-        /* Container üzerine şeffaf bir katman (pseudo-element) ekliyoruz */
+        /* --- ŞEHİRCİLİK/İMAR PLANLAMA ARKA PLAN DESENİ --- */
         .container::before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 120%;
-            height: 120%;
-            /* Şehir parselleri/imar planı görünümü veren minimalist doku */
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://png.pngtree.com/png-vector/20220111/ourmid/pngtree-street-map-of-a-metropolis-from-an-aerial-perspective-vector-png-image_28839548.jpg');
             background-repeat: repeat;
-            opacity: 0.4; /* Şeffaflık ayarı (Ne kadar belirgin olacağı) */
-            z-index: 0;   /* İçeriğin arkasında kalsın */
-            pointer-events: none; /* Tıklamaları engellemesin */
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
         }
 
         /* Splash Screen */
@@ -45,92 +71,125 @@
         #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
         /* Splash Görseli */
-        #splash img { width: 90%; height: 30%; object-fit: cover; animation: pulse 0.85s infinite; }
+        #splash img { 
+            width: 90%; height: 30%; 
+            object-fit: cover; 
+            animation: pulse 0.85s infinite; 
+            -webkit-user-drag: none; /* Resim sürüklemeyi engelle */
+        }
 
         /* Content */
         #content { 
-            position: relative; /* Arka planın üzerinde durması için */
+            position: relative;
             z-index: 1; 
             opacity: 0; 
             transform: translateY(30px); 
             transition: all 0.01s cubic-bezier(0.16, 1, 0.3, 1); 
-            padding: 0 0 40px 0; 
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
-        .header { background-color: #531a6e; padding: 60px 20px 40px 20px; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; text-align: center; }
-        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto 16px auto; object-fit: cover; background: #e5e7eb; display: block; }
-        .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; }
-        .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
-                
-        .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; }
-        .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
-        
-        .body { padding: 30px 24px; }
-        .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 30px; font-weight: 500; }
-        
-        .btn { 
-            display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; margin-bottom: 12px; 
-            background: rgba(255, 255, 255, 0.95); /* Buton arkası hafif dolu olsun */
-            border: 2px solid transparent; 
-            border-radius: 12px; text-decoration: none; color: #374151; font-weight: 600; font-size: 15px; transition: all 0.2s; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); box-sizing: border-box; 
+        .header { 
+            background-color: #531a6e; 
+            padding: 60px 20px 40px 20px; 
+            /* iPhone çentik boşluğu */
+            padding-top: calc(60px + env(safe-area-inset-top)); 
+            color: white; 
+            border-bottom-left-radius: 30px; 
+            border-bottom-right-radius: 30px; 
+            text-align: center; 
+            flex-shrink: 0;
         }
         
-        /* Mobilde dokunma efekti */
-        .btn:active { transform: scale(0.98); background-color: #f9f9f9; }
-        /* Masaüstü hover efekti */
-        @media (hover: hover) { .btn:hover { transform: translateY(-2px); } }
+        .avatar { 
+            width: 100px; height: 100px; 
+            border-radius: 50%; 
+            border: 4px solid white; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin: 0 auto 16px auto; 
+            object-fit: cover; 
+            background: #e5e7eb; 
+            display: block; 
+            -webkit-user-select: none; /* Resim seçilmeyi engelle */
+            user-select: none;
+        }
         
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .body { padding: 30px 24px; }
+        .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; }
+        .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
+        
+        .body { 
+            padding: 30px 24px; 
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
         .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 30px; font-weight: 500; }
         
+        .links { width: 100%; }
+
         .btn { 
-            display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; margin-bottom: 12px; 
-            background: rgba(255, 255, 255, 0.95); /* Butonların arkası hafif dolu olsun ki desen karışmasın */
+            display: flex; align-items: center; justify-content: center; 
+            width: 100%; padding: 14px; margin-bottom: 12px; 
+            background: rgba(255, 255, 255, 0.95); 
             border: 2px solid transparent;
-            border-radius: 12px; text-decoration: none; color: #374151; font-weight: 600; font-size: 15px; transition: all 0.2s; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); box-sizing: border-box; 
+            border-radius: 12px; 
+            text-decoration: none; color: #374151; 
+            font-weight: 600; font-size: 15px; 
+            transition: all 0.2s; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+            box-sizing: border-box; 
+            cursor: pointer;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .btn:hover { transform: translateY(-2px); }
+
+        /* Sadece masaüstünde hover çalışsın, mobilde takılmasın */
+        @media (hover: hover) {
+            .btn:hover { transform: translateY(-2px); background: #ffffff; }
+        }
+        
+        /* Mobilde dokunma hissi */
+        .btn:active { transform: scale(0.98); background: #f9fafb; }
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* --- BUTON ANİMASYONLARI --- */
-
-        /* Mavi Yanıp Sönme (1. Buton - İletişim) */
         @keyframes border-flash-blue {
             0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
             50% { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
         }
-
-        /* Koyu Sarı Yanıp Sönme (2. Buton - Web) */
         @keyframes border-flash-yellow {
             0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
             50% { border-color: #d97706; box-shadow: 0 0 12px rgba(217, 119, 6, 0.4); }
         }
-
-        /* Turuncu Yanıp Sönme (3. Buton - Mail) */
         @keyframes border-flash-orange {
             0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
             50% { border-color: #f97316; box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
         }
 
-        /* Animasyonları butonlara sırayla ata */
-        .links .btn:nth-child(1) {
-            animation: border-flash-blue 3s infinite;
-            animation-delay: 0s;
-        }
-        .links .btn:nth-child(2) {
-            animation: border-flash-yellow 3s infinite;
-            animation-delay: 1s;
-        }
-        .links .btn:nth-child(3) {
-            animation: border-flash-orange 3s infinite;
-            animation-delay: 2s;
+        .links .btn:nth-child(1) { animation: border-flash-blue 3s infinite; animation-delay: 0s; }
+        .links .btn:nth-child(2) { animation: border-flash-yellow 3s infinite; animation-delay: 1s; }
+        .links .btn:nth-child(3) { animation: border-flash-orange 3s infinite; animation-delay: 2s; }
+
+        /* --- MOBİL UYUMLULUK AYARLARI (MEDIA QUERIES) --- */
+        @media (max-width: 370px) {
+            .header { padding-bottom: 25px; }
+            .avatar { width: 85px; height: 85px; margin-bottom: 10px; }
+            .name { font-size: 20px; }
+            .btn { padding: 12px; font-size: 13px; }
+            .bio { font-size: 13px; margin-bottom: 20px; }
         }
 
+        @media (max-height: 600px) {
+            .header { padding-top: 20px; padding-bottom: 20px; }
+            .avatar { width: 70px; height: 70px; margin-bottom: 8px; }
+            .body { padding-top: 15px; }
+        }
+                                                            
     </style>
 </head>
 <body>
@@ -159,14 +218,18 @@
     <script>
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('splash').classList.add('hidden');
-                document.getElementById('content').classList.add('visible');
+                const splash = document.getElementById('splash');
+                const content = document.getElementById('content');
+                
+                if(splash && content) {
+                    splash.classList.add('hidden');
+                    // Geçişin daha yumuşak olması için mini gecikme
+                    setTimeout(() => {
+                        content.classList.add('visible');
+                    }, 50);
+                }
             }, 1100);
         });
     </script>
 </body>
 </html>
-
-
-
-Bu kodda
