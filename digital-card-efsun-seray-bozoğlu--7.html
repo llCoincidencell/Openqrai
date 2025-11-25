@@ -40,12 +40,13 @@
             position: relative; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             
-            /* DÜZELTİLEN KISIM: İçerik artık ortada değil, ÜSTTEN başlar */
+            /* Flexbox Ayarları */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* <-- BURASI DEĞİŞTİ */
+            justify-content: flex-start; 
             
-            padding-bottom: env(safe-area-inset-bottom);
+            /* Alt boşluğu kaldırdık, çünkü footer yönetecek */
+            padding-bottom: 0; 
         }
 
         /* --- ŞEHİRCİLİK ARKA PLAN DESENİ --- */
@@ -58,7 +59,7 @@
             opacity: 0.4;
             z-index: 0;
             pointer-events: none;
-            background-attachment: fixed; /* Arka plan sabit kalsın */
+            background-attachment: fixed;
         }
 
         /* Splash Screen */
@@ -86,7 +87,6 @@
             opacity: 0; 
             transform: translateY(30px); 
             transition: all 0.01s cubic-bezier(0.16, 1, 0.3, 1); 
-            /* Üstten boşluk kalmasın diye padding'i sıfırladık veya azalttık */
             padding: 0 0 20px 0; 
         }
         #content.visible { opacity: 1; transform: translateY(0); }
@@ -94,15 +94,12 @@
         .header { 
             background-color: #531a6e; 
             padding: 40px 20px; 
-            padding-top: calc(40px + env(safe-area-inset-top)); /* Çentik payı */
+            padding-top: calc(40px + env(safe-area-inset-top));
             color: white; 
             border-bottom-left-radius: 30px; 
             border-bottom-right-radius: 30px; 
             text-align: center; 
             margin-bottom: 20px;
-            
-            /* Header üstte yapışık kalsın istersen bu satırı açabilirsin: */
-            /* position: sticky; top: 0; z-index: 10; */
         }
         
         .avatar { 
@@ -151,6 +148,38 @@
         .links .btn:nth-child(2) { animation: border-flash-yellow 3s infinite; animation-delay: 1s; }
         .links .btn:nth-child(3) { animation: border-flash-orange 3s infinite; animation-delay: 2s; }
 
+        /* --- KAYAN YAZI (FOOTER TICKER) AYARLARI --- */
+        .footer-ticker {
+            margin-top: auto; /* İçeriği itip en alta yapışmasını sağlar */
+            width: 100%;
+            background-color: #531a6e; /* Marka rengi */
+            color: white;
+            padding: 12px 0;
+            overflow: hidden;
+            position: sticky;
+            bottom: 0;
+            z-index: 20;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            /* iPhone alt çubuk desteği */
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            /* Kayan yazı animasyonu: 15s sürede akar */
+            animation: scroll-left 15s linear infinite;
+            padding-left: 100%; /* Sağdan başlasın */
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         /* Mobil Uyumluluk */
         @media (max-width: 370px) {
             .header { padding: 30px 15px; }
@@ -173,11 +202,11 @@
         <div id="content">
             <div class="header">
                 <img src="https://i.hizliresim.com/o2fth2s.png" class="avatar" alt="Profile">
-                <h1 class="name">EFSUN SERAY BOZOĞLU</h1>
-                <div class="title">ŞEHİR PLANCISI</div>
+                <h1 class="name">EFSUN SERAY BOZOĞLU </h1>
+                <div class="title">ŞEHİR PLANCISI  </div>
             </div>
             <div class="body">
-                <div class="bio"> </div>
+                <div class="bio">Aşağıdaki kanallardan ulaşabilirsiniz.</div>
                 <div class="links">
                     <a href="tel:+90 501 555 60 01" target="_self" class="btn">İletişim: +90 501 555 60 01</a>
                     <a href="https://www.tutasteplanlama.com.tr" target="_blank" class="btn">https://www.tutasteplanlama.com.tr</a>
@@ -185,6 +214,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="footer-ticker">
+            <div class="ticker-content">
+                TUTASTE İmar Planlama ve Danışmanlık Hizmetleri A.Ş. &nbsp;&nbsp;&nbsp; • &nbsp;&nbsp;&nbsp; TUTASTE İmar Planlama ve Danışmanlık Hizmetleri A.Ş.
+            </div>
+        </div>
+
     </div>
 
     <script>
