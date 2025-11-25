@@ -2,158 +2,116 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EFSUN SERAY BOZOĞLU - Dijital Kartvizit</title>
     <style>
-        /* Temel Sıfırlama */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f3f4f6; 
-            color: #1f2937;
-            /* iOS'ta lastik bant etkisini engellemek için */
-            overscroll-behavior: none;
-        }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; }
         
+        /* Ana Kapsayıcı */
         .container { 
-            width: 100%;
-            max-width: 480px; /* Tablet ve PC'de çok genişlemesin */
+            max-width: 480px; 
             margin: 0 auto; 
             min-height: 100vh; 
-            /* Çentikli telefonlar için güvenli alan dolgusu */
-            padding-bottom: env(safe-area-inset-bottom);
             background-color: white; 
             position: relative; 
-            overflow-x: hidden; /* Yanlara taşmayı engelle */
+            overflow: hidden; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
-        /* İmar Planı Arka Plan Deseni */
+        /* --- YENİ: ŞEHİRCİLİK/İMAR PLANLAMA ARKA PLAN DESENİ --- */
+        /* Container üzerine şeffaf bir katman (pseudo-element) ekliyoruz */
         .container::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/city-fields.png');
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 120%;
+            /* Şehir parselleri/imar planı görünümü veren minimalist doku */
+            background-image: url('https://png.pngtree.com/png-vector/20220111/ourmid/pngtree-street-map-of-a-metropolis-from-an-aerial-perspective-vector-png-image_28839548.jpg');
             background-repeat: repeat;
-            opacity: 0.4;
-            z-index: 0;
-            pointer-events: none;
+            opacity: 0.4; /* Şeffaflık ayarı (Ne kadar belirgin olacağı) */
+            z-index: 0;   /* İçeriğin arkasında kalsın */
+            pointer-events: none; /* Tıklamaları engellemesin */
         }
 
-        /* Splash Screen (Açılış) */
+        /* Splash Screen */
         #splash {
-            position: absolute; 
-            inset: 0; 
-            z-index: 999;
+            position: absolute; inset: 0; z-index: 90;
             background-color: #531a6e;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.3s ease-out, visibility 0.2s;
         }
         #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Splash Görseli: Küçük ekranlarda taşmaması için max-width eklendi */
-        #splash img { 
-            width: 100%; 
-            height: 100%; 
-            max-width: 480px;
-            object-fit: cover; 
-            animation: pulse 2s infinite; 
-        }
+        /* Splash Görseli */
+        #splash img { width: 90%; height: 30%; object-fit: cover; animation: pulse 0.85s infinite; }
 
-        /* Ana İçerik */
+        /* Content */
         #content { 
-            position: relative; 
+            position: relative; /* Arka planın üzerinde durması için */
             z-index: 1; 
             opacity: 0; 
-            transform: translateY(20px); 
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
-            padding-bottom: 40px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            transform: translateY(30px); 
+            transition: all 0.01s cubic-bezier(0.16, 1, 0.3, 1); 
+            padding: 0 0 40px 0; 
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
-        .header { 
-            background-color: #531a6e; 
-            padding: 60px 20px 40px 20px; 
-            /* Çentik desteği: Üstten boşluk bırak */
-            padding-top: calc(60px + env(safe-area-inset-top));
-            color: white; 
-            border-bottom-left-radius: 30px; 
-            border-bottom-right-radius: 30px; 
-            text-align: center; 
-            flex-shrink: 0; /* Header küçülmesin */
-        }
-
-        .avatar { 
-            width: 100px; height: 100px; 
-            border-radius: 50%; 
-            border: 4px solid white; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            margin: 0 auto 16px auto; 
-            object-fit: cover; 
-            background: #e5e7eb; 
-            display: block; 
-        }
+        .header { background-color: #531a6e; padding: 60px 20px 40px 20px; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; text-align: center; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto 16px auto; object-fit: cover; background: #e5e7eb; display: block; }
+        .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; }
+        .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
         
-        .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: 0.5px; }
-        .title { font-size: 14px; opacity: 0.95; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .body { padding: 30px 24px; }
+        .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 30px; font-weight: 500; }
         
-        .body { 
-            padding: 30px 24px; 
-            flex-grow: 1; /* Alt kısmı doldur */
-            display: flex;
-            flex-direction: column;
-            /* Küçük ekranlarda ortalama, büyüklerde üstten başlama */
-            justify-content: flex-start; 
-        }
-
-        .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 25px; font-weight: 500; }
-        
-        .links { width: 100%; }
-
         .btn { 
-            display: flex; align-items: center; justify-content: center; 
-            width: 100%; padding: 16px; margin-bottom: 14px; 
-            background: rgba(255, 255, 255, 0.95); 
+            display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; margin-bottom: 12px; 
+            background: rgba(255, 255, 255, 0.95); /* Butonların arkası hafif dolu olsun ki desen karışmasın */
             border: 2px solid transparent;
-            border-radius: 14px; 
-            text-decoration: none; color: #374151; 
-            font-weight: 600; font-size: 15px; 
-            transition: all 0.2s; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-            /* Uzun linkler taşmasın diye */
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            border-radius: 12px; text-decoration: none; color: #374151; font-weight: 600; font-size: 15px; transition: all 0.2s; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); box-sizing: border-box; 
         }
-        .btn:active { transform: scale(0.98); }
+        .btn:hover { transform: translateY(-2px); }
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* --- BUTON ANİMASYONLARI --- */
+
+        /* Mavi Yanıp Sönme (1. Buton - İletişim) */
         @keyframes border-flash-blue {
-            0%, 100% { border-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-            50% { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            50% { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
         }
+
+        /* Koyu Sarı Yanıp Sönme (2. Buton - Web) */
         @keyframes border-flash-yellow {
-            0%, 100% { border-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-            50% { border-color: #d97706; box-shadow: 0 0 15px rgba(217, 119, 6, 0.4); }
+            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            50% { border-color: #d97706; box-shadow: 0 0 12px rgba(217, 119, 6, 0.4); }
         }
+
+        /* Turuncu Yanıp Sönme (3. Buton - Mail) */
         @keyframes border-flash-orange {
-            0%, 100% { border-color: transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-            50% { border-color: #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
+            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            50% { border-color: #f97316; box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
         }
 
-        .links .btn:nth-child(1) { animation: border-flash-blue 3s infinite; animation-delay: 0s; }
-        .links .btn:nth-child(2) { animation: border-flash-yellow 3s infinite; animation-delay: 1s; }
-        .links .btn:nth-child(3) { animation: border-flash-orange 3s infinite; animation-delay: 2s; }
+        /* Animasyonları butonlara sırayla ata */
+        .links .btn:nth-child(1) {
+            animation: border-flash-blue 3s infinite;
+            animation-delay: 0s;
+        }
+        .links .btn:nth-child(2) {
+            animation: border-flash-yellow 3s infinite;
+            animation-delay: 1s;
+        }
+        .links .btn:nth-child(3) {
+            animation: border-flash-orange 3s infinite;
+            animation-delay: 2s;
+        }
 
-        /* --- MOBİL UYUMLULUK AYARLARI (MEDIA QUERIES) --- */
+      /* --- MOBİL UYUMLULUK AYARLARI (MEDIA QUERIES) --- */
         
         /* Küçük Ekranlı Telefonlar (iPhone SE, eski Androidler) */
         @media (max-width: 370px) {
@@ -170,7 +128,7 @@
             .avatar { width: 70px; height: 70px; margin-bottom: 8px; }
             .body { padding-top: 15px; }
         }
-
+                                                            
     </style>
 </head>
 <body>
@@ -182,14 +140,14 @@
         <div id="content">
             <div class="header">
                 <img src="https://i.hizliresim.com/o2fth2s.png" class="avatar" alt="Profile">
-                <h1 class="name">EFSUN SERAY BOZOĞLU</h1>
-                <div class="title">ŞEHİR PLANCISI</div>
+                <h1 class="name">EFSUN SERAY BOZOĞLU </h1>
+                <div class="title">ŞEHİR PLANCISI  </div>
             </div>
             <div class="body">
                 <div class="bio">Aşağıdaki kanallardan ulaşabilirsiniz.</div>
                 <div class="links">
-                    <a href="tel:+905015556001" target="_self" class="btn">İletişim: +90 501 555 60 01</a>
-                    <a href="https://www.tutasteplanlama.com.tr" target="_blank" class="btn">www.tutasteplanlama.com.tr</a>
+                    <a href="tel:+90 501 555 60 01" target="_self" class="btn">İletişim: +90 501 555 60 01</a>
+                    <a href="https://www.tutasteplanlama.com.tr" target="_blank" class="btn">https://www.tutasteplanlama.com.tr</a>
                     <a href="mailto:efsun@tutasteplanlama.com.tr" target="_self" class="btn">efsun@tutasteplanlama.com.tr</a>
                 </div>
             </div>
@@ -198,21 +156,15 @@
 
     <script>
         window.addEventListener('load', () => {
-            // Sayfa tamamen yüklendiğinde çalışır
             setTimeout(() => {
-                const splash = document.getElementById('splash');
-                const content = document.getElementById('content');
-                
-                splash.classList.add('hidden');
-                
-                // Splash gizlendikten hemen sonra içeriği göster (daha akıcı geçiş için küçük gecikme)
-                setTimeout(() => {
-                    content.classList.add('visible');
-                }, 100);
-                
-                // Performans için splash'i DOM'dan tamamen kaldırmayı ertele (isteğe bağlı, burada sadece gizliyoruz)
-            }, 2500); 
+                document.getElementById('splash').classList.add('hidden');
+                document.getElementById('content').classList.add('visible');
+            }, 1100);
         });
     </script>
 </body>
 </html>
+
+
+
+Bu kodda
