@@ -20,7 +20,6 @@
 
         html {
             height: 100%;
-            overflow: hidden; /* HTML seviyesinde kaydırmayı kapat */
         }
 
         body { 
@@ -30,12 +29,16 @@
             background-color: #f3f4f6; 
             color: #1f2937;
             
-            /* KAYDIRMAYI ENGELLEYEN KODLAR */
+            /* KAYDIRMA AYARLARI (Yenileme için güncellendi) */
             height: 100%; 
-            overflow: hidden; /* Kaydırmayı kapat */
-           no position: fixed; /* Sayfayı ekrana sabitle */
             width: 100%;
-            overscroll-behavior: none;
+            
+            /* Dikeyde (Y) kaydırmaya izin ver ki 'Yenile' çalışsın */
+            overflow-y: auto; 
+            /* Yatayda (X) taşmayı engelle */
+            overflow-x: hidden;
+            
+            /* overscroll-behavior: none; <-- BU SATIRI SİLDİM (Yenilemeyi engelliyordu) */
             
             /* Yazı netleştirme */
             -webkit-font-smoothing: antialiased;
@@ -47,13 +50,16 @@
             width: 100%;
             max-width: 480px; 
             margin: 0 auto; 
-            height: 100%; /* Ekranı tam kapla */
+            min-height: 100%; /* Ekranı tam kapla */
             
             /* iPhone X ve üzeri için alt çubuk boşluğu */
             padding-bottom: env(safe-area-inset-bottom); 
             background-color: white; 
             position: relative; 
-            overflow: hidden; /* İçeriğin taşmasını engelle */
+            
+            /* İçerik taşarsa container içinde kalsın */
+            overflow-x: hidden; 
+            
             box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
@@ -96,14 +102,16 @@
             padding-bottom: 40px;
             display: flex;
             flex-direction: column;
-            height: 100%; /* Yüksekliği tam kullan */
-            justify-content: center; /* İçeriği dikey ortala (Kaydırma olmadığı için) */
+            
+            /* İçeriği dikey ortala ama esneklik bırak */
+            min-height: 100vh; 
+            justify-content: center; 
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
         .header { 
             background-color: #531a6e; 
-            padding: 40px 20px; /* Biraz küçülttüm taşmaması için */
+            padding: 40px 20px; 
             padding-top: calc(40px + env(safe-area-inset-top)); 
             color: white; 
             border-bottom-left-radius: 30px; 
@@ -223,9 +231,8 @@
 
     <script>
         window.addEventListener('load', () => {
-            // Sayfa kaydırmayı JS ile de garantiye alalım (özellikle iOS için)
-            document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive: false });
-
+            // Dokunma engelleme kodunu kaldırdım ki yenileme yapılabilsin.
+            
             setTimeout(() => {
                 const splash = document.getElementById('splash');
                 const content = document.getElementById('content');
