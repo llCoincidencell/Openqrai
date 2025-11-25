@@ -14,12 +14,13 @@
         /* 2. TEKNİK SIFIRLAMA VE DOKUNMATİK AYARLARI */
         * { 
             box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; /* Mobilde tıklama mavisini kaldır */
+            -webkit-tap-highlight-color: transparent; 
             outline: none;
         }
 
-        body, html {
-            height: 100%; /* Tam sayfa yerleşimi garanti et */
+        html {
+            height: 100%;
+            overflow: hidden; /* HTML seviyesinde kaydırmayı kapat */
         }
 
         body { 
@@ -28,9 +29,15 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f3f4f6; 
             color: #1f2937;
-            overscroll-behavior: none; /* iOS lastik bant efektini engelle */
             
-            /* Yazıların daha net görünmesi için */
+            /* KAYDIRMAYI ENGELLEYEN KODLAR */
+            height: 100%; 
+            overflow: hidden; /* Kaydırmayı kapat */
+            position: fixed; /* Sayfayı ekrana sabitle */
+            width: 100%;
+            overscroll-behavior: none;
+            
+            /* Yazı netleştirme */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -38,14 +45,15 @@
         /* Ana Kapsayıcı */
         .container { 
             width: 100%;
-            max-width: 480px; /* Masaüstünde çok genişlemeyi engelle */
+            max-width: 480px; 
             margin: 0 auto; 
-            min-height: 100vh; 
+            height: 100%; /* Ekranı tam kapla */
+            
             /* iPhone X ve üzeri için alt çubuk boşluğu */
             padding-bottom: env(safe-area-inset-bottom); 
             background-color: white; 
             position: relative; 
-            overflow-x: hidden; 
+            overflow: hidden; /* İçeriğin taşmasını engelle */
             box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
@@ -75,7 +83,7 @@
             width: 90%; height: 30%; 
             object-fit: cover; 
             animation: pulse 0.85s infinite; 
-            -webkit-user-drag: none; /* Resim sürüklemeyi engelle */
+            -webkit-user-drag: none; 
         }
 
         /* Content */
@@ -88,15 +96,15 @@
             padding-bottom: 40px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100%; /* Yüksekliği tam kullan */
+            justify-content: center; /* İçeriği dikey ortala (Kaydırma olmadığı için) */
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
         .header { 
             background-color: #531a6e; 
-            padding: 60px 20px 40px 20px; 
-            /* iPhone çentik boşluğu */
-            padding-top: calc(60px + env(safe-area-inset-top)); 
+            padding: 40px 20px; /* Biraz küçülttüm taşmaması için */
+            padding-top: calc(40px + env(safe-area-inset-top)); 
             color: white; 
             border-bottom-left-radius: 30px; 
             border-bottom-right-radius: 30px; 
@@ -113,7 +121,7 @@
             object-fit: cover; 
             background: #e5e7eb; 
             display: block; 
-            -webkit-user-select: none; /* Resim seçilmeyi engelle */
+            -webkit-user-select: none; 
             user-select: none;
         }
         
@@ -121,14 +129,14 @@
         .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
         
         .body { 
-            padding: 30px 24px; 
+            padding: 20px 24px; 
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center; /* Linkleri ortala */
         }
         
-        .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 30px; font-weight: 500; }
+        .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 25px; font-weight: 500; }
         
         .links { width: 100%; }
 
@@ -147,12 +155,10 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        /* Sadece masaüstünde hover çalışsın, mobilde takılmasın */
         @media (hover: hover) {
             .btn:hover { transform: translateY(-2px); background: #ffffff; }
         }
         
-        /* Mobilde dokunma hissi */
         .btn:active { transform: scale(0.98); background: #f9fafb; }
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -175,19 +181,19 @@
         .links .btn:nth-child(2) { animation: border-flash-yellow 3s infinite; animation-delay: 1s; }
         .links .btn:nth-child(3) { animation: border-flash-orange 3s infinite; animation-delay: 2s; }
 
-        /* --- MOBİL UYUMLULUK AYARLARI (MEDIA QUERIES) --- */
+        /* --- MOBİL UYUMLULUK (KÜÇÜK EKRANLAR) --- */
         @media (max-width: 370px) {
-            .header { padding-bottom: 25px; }
-            .avatar { width: 85px; height: 85px; margin-bottom: 10px; }
+            .header { padding: 30px 15px; }
+            .avatar { width: 80px; height: 80px; margin-bottom: 10px; }
             .name { font-size: 20px; }
             .btn { padding: 12px; font-size: 13px; }
-            .bio { font-size: 13px; margin-bottom: 20px; }
+            .bio { font-size: 13px; margin-bottom: 15px; }
         }
 
         @media (max-height: 600px) {
-            .header { padding-top: 20px; padding-bottom: 20px; }
-            .avatar { width: 70px; height: 70px; margin-bottom: 8px; }
-            .body { padding-top: 15px; }
+            .header { padding-top: 15px; padding-bottom: 15px; }
+            .avatar { width: 60px; height: 60px; margin-bottom: 5px; }
+            .body { padding-top: 10px; }
         }
                                                             
     </style>
@@ -217,13 +223,15 @@
 
     <script>
         window.addEventListener('load', () => {
+            // Sayfa kaydırmayı JS ile de garantiye alalım (özellikle iOS için)
+            document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive: false });
+
             setTimeout(() => {
                 const splash = document.getElementById('splash');
                 const content = document.getElementById('content');
                 
                 if(splash && content) {
                     splash.classList.add('hidden');
-                    // Geçişin daha yumuşak olması için mini gecikme
                     setTimeout(() => {
                         content.classList.add('visible');
                     }, 50);
