@@ -23,12 +23,8 @@
             background-color: #f3f4f6; 
             color: #1f2937;
             
-            /* --- İŞTE SİHİRLİ KISIM BURASI --- */
-            
-            /* 1. Yenileme (Pull-to-refresh) çalışması için kaydırma açık olmalı */
+            /* KAYDIRMA VE YENİLEME AYARLARI */
             overflow-y: auto; 
-            
-            /* 2. Ama sayfanın lastik gibi sekmesini ve boşluğa kaymasını engelle */
             overscroll-behavior-y: contain; 
             
             -webkit-font-smoothing: antialiased;
@@ -39,17 +35,16 @@
             width: 100%;
             max-width: 480px; 
             margin: 0 auto; 
-            min-height: 100%; /* Ekranı doldur */
+            min-height: 100%; 
             background-color: white; 
             position: relative; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             
-            /* İçeriği dikey ortalamak için Flexbox */
+            /* DÜZELTİLEN KISIM: İçerik artık ortada değil, ÜSTTEN başlar */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* <-- BURASI DEĞİŞTİ */
             
-            /* Alt güvenli alan boşluğu (iPhone X+) */
             padding-bottom: env(safe-area-inset-bottom);
         }
 
@@ -63,11 +58,12 @@
             opacity: 0.4;
             z-index: 0;
             pointer-events: none;
+            background-attachment: fixed; /* Arka plan sabit kalsın */
         }
 
         /* Splash Screen */
         #splash {
-            position: fixed; /* Sabit kalmalı */
+            position: fixed; 
             inset: 0; 
             z-index: 999;
             background-color: #531a6e;
@@ -90,18 +86,23 @@
             opacity: 0; 
             transform: translateY(30px); 
             transition: all 0.01s cubic-bezier(0.16, 1, 0.3, 1); 
-            padding: 20px 0;
+            /* Üstten boşluk kalmasın diye padding'i sıfırladık veya azalttık */
+            padding: 0 0 20px 0; 
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
         .header { 
             background-color: #531a6e; 
             padding: 40px 20px; 
+            padding-top: calc(40px + env(safe-area-inset-top)); /* Çentik payı */
             color: white; 
             border-bottom-left-radius: 30px; 
             border-bottom-right-radius: 30px; 
             text-align: center; 
             margin-bottom: 20px;
+            
+            /* Header üstte yapışık kalsın istersen bu satırı açabilirsin: */
+            /* position: sticky; top: 0; z-index: 10; */
         }
         
         .avatar { 
