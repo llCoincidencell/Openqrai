@@ -4,132 +4,104 @@
     <meta charset="UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <meta name="theme-color" content="#531a6e">
-    <meta name="msapplication-navbutton-color" content="#531a6e">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <title>EFSUN SERAY BOZOĞLU - Dijital Kartvizit</title>
     <style>
-        /* 2. TEKNİK SIFIRLAMA */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none;
-        }
+        /* 2. SIFIRLAMA */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
-        html {
+        html, body {
             height: 100%;
-            overflow: hidden; /* HTML taşmasını engelle */
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         body { 
-            margin: 0; 
-            padding: 0; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f3f4f6; 
             color: #1f2937;
             
-            /* SAYFAYI EKRNA ÇİVİLEME AYARLARI */
-            position: fixed; /* Sayfayı ekrana sabitle */
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Body'nin kendisi kaymasın */
-            overscroll-behavior: none; /* Lastik gibi sünmeyi engelle */
+            /* --- İŞTE SİHİRLİ KISIM BURASI --- */
+            
+            /* 1. Yenileme (Pull-to-refresh) çalışması için kaydırma açık olmalı */
+            overflow-y: auto; 
+            
+            /* 2. Ama sayfanın lastik gibi sekmesini ve boşluğa kaymasını engelle */
+            overscroll-behavior-y: contain; 
             
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* Ana Kapsayıcı - Kaydırma Burada Olacak */
+        /* Ana Kapsayıcı */
         .container { 
             width: 100%;
             max-width: 480px; 
             margin: 0 auto; 
-            height: 100%; /* Ekranı doldur */
-            
-            /* İÇERİK KAYDIRMA VE YENİLEME AYARI */
-            overflow-y: hidden; /* Sadece dikeyde içerik kayabilsin */
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; /* iOS'ta akıcı kaydırma */
-            
-            /* Bu ayar, içerik bittiğinde sayfanın bütününün oynamasını engeller */
-            overscroll-behavior-y: contain; 
-            
-            padding-bottom: env(safe-area-inset-bottom); 
+            min-height: 100%; /* Ekranı doldur */
             background-color: white; 
             position: relative; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            
+            /* İçeriği dikey ortalamak için Flexbox */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            /* Alt güvenli alan boşluğu (iPhone X+) */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* --- ŞEHİRCİLİK/İMAR PLANLAMA ARKA PLAN DESENİ --- */
+        /* --- ŞEHİRCİLİK ARKA PLAN DESENİ --- */
         .container::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; 
-            /* Arka plan yüksekliğini container'dan fazla verelim ki kayınca bitmesin */
-            height: 150%; 
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('https://png.pngtree.com/png-vector/20220111/ourmid/pngtree-street-map-of-a-metropolis-from-an-aerial-perspective-vector-png-image_28839548.jpg');
             background-repeat: repeat;
             opacity: 0.4;
             z-index: 0;
             pointer-events: none;
-            /* Arka planı sabitle */
-            background-attachment: local; 
         }
 
         /* Splash Screen */
         #splash {
-            position: fixed; /* Splash ekranı daima sabit kalsın */
+            position: fixed; /* Sabit kalmalı */
             inset: 0; 
             z-index: 999;
             background-color: #531a6e;
             display: flex; align-items: center; justify-content: center;
             transition: opacity 0.3s ease-out, visibility 0.2s;
-            /* Splash üzerinde kaydırmayı engelle */
-            touch-action: none; 
         }
         #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Splash Görseli */
         #splash img { 
             width: 90%; height: 30%; 
-            max-width: 400px;
             object-fit: cover; 
             animation: pulse 0.85s infinite; 
-            -webkit-user-drag: none; 
         }
 
         /* Content */
         #content { 
             position: relative;
             z-index: 1; 
+            width: 100%;
             opacity: 0; 
             transform: translateY(30px); 
             transition: all 0.01s cubic-bezier(0.16, 1, 0.3, 1); 
-            padding-bottom: 40px;
-            display: flex;
-            flex-direction: column;
-            
-            /* İçeriği dikeyde ortala ama kaydırmaya pay bırak */
-            min-height: 100%; 
-            justify-content: center; 
+            padding: 20px 0;
         }
         #content.visible { opacity: 1; transform: translateY(0); }
         
         .header { 
             background-color: #531a6e; 
             padding: 40px 20px; 
-            padding-top: calc(40px + env(safe-area-inset-top)); 
             color: white; 
             border-bottom-left-radius: 30px; 
             border-bottom-right-radius: 30px; 
             text-align: center; 
-            flex-shrink: 0;
-            /* Header'ın üstte kalmasını sağla */
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            margin-bottom: 20px;
         }
         
         .avatar { 
@@ -141,23 +113,14 @@
             object-fit: cover; 
             background: #e5e7eb; 
             display: block; 
-            -webkit-user-select: none; 
             user-select: none;
         }
         
         .name { font-size: 24px; font-weight: 700; margin: 0 0 4px 0; }
         .title { font-size: 14px; opacity: 0.9; font-weight: 500; }
         
-        .body { 
-            padding: 20px 24px; 
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-        }
-        
+        .body { padding: 0 24px; }
         .bio { font-size: 15px; line-height: 1.6; color: #4b5563; text-align: center; margin-bottom: 25px; font-weight: 500; }
-        
         .links { width: 100%; }
 
         .btn { 
@@ -170,52 +133,34 @@
             font-weight: 600; font-size: 15px; 
             transition: all 0.2s; 
             box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
-            box-sizing: border-box; 
-            cursor: pointer;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        @media (hover: hover) {
-            .btn:hover { transform: translateY(-2px); background: #ffffff; }
-        }
-        
         .btn:active { transform: scale(0.98); background: #f9fafb; }
+        @media (hover: hover) { .btn:hover { transform: translateY(-2px); background: #ffffff; } }
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* --- BUTON ANİMASYONLARI --- */
-        @keyframes border-flash-blue {
-            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-            50% { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
-        }
-        @keyframes border-flash-yellow {
-            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-            50% { border-color: #d97706; box-shadow: 0 0 12px rgba(217, 119, 6, 0.4); }
-        }
-        @keyframes border-flash-orange {
-            0%, 100% { border-color: transparent; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-            50% { border-color: #f97316; box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
-        }
+        /* Animasyonlar */
+        @keyframes border-flash-blue { 0%, 100% { border-color: transparent; } 50% { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); } }
+        @keyframes border-flash-yellow { 0%, 100% { border-color: transparent; } 50% { border-color: #d97706; box-shadow: 0 0 12px rgba(217, 119, 6, 0.4); } }
+        @keyframes border-flash-orange { 0%, 100% { border-color: transparent; } 50% { border-color: #f97316; box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); } }
 
         .links .btn:nth-child(1) { animation: border-flash-blue 3s infinite; animation-delay: 0s; }
         .links .btn:nth-child(2) { animation: border-flash-yellow 3s infinite; animation-delay: 1s; }
         .links .btn:nth-child(3) { animation: border-flash-orange 3s infinite; animation-delay: 2s; }
 
-        /* --- MOBİL UYUMLULUK (KÜÇÜK EKRANLAR) --- */
+        /* Mobil Uyumluluk */
         @media (max-width: 370px) {
             .header { padding: 30px 15px; }
             .avatar { width: 80px; height: 80px; margin-bottom: 10px; }
             .name { font-size: 20px; }
             .btn { padding: 12px; font-size: 13px; }
-            .bio { font-size: 13px; margin-bottom: 15px; }
         }
-
         @media (max-height: 600px) {
-            .header { padding-top: 15px; padding-bottom: 15px; }
-            .avatar { width: 60px; height: 60px; margin-bottom: 5px; }
-            .body { padding-top: 10px; }
+            .header { padding: 20px; }
+            .avatar { width: 60px; height: 60px; }
         }
-                                                            
     </style>
 </head>
 <body>
@@ -246,12 +191,9 @@
             setTimeout(() => {
                 const splash = document.getElementById('splash');
                 const content = document.getElementById('content');
-                
                 if(splash && content) {
                     splash.classList.add('hidden');
-                    setTimeout(() => {
-                        content.classList.add('visible');
-                    }, 50);
+                    setTimeout(() => { content.classList.add('visible'); }, 50);
                 }
             }, 1100);
         });
